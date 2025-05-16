@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { computed, ref } from 'vue';
+import { ref } from 'vue';
 import ChatBubble from '../components/ChatBubble.vue';
 import ChatInput from '../components/ChatInput.vue';
 import GenAiOption from './GenAiOption.vue';
@@ -50,6 +50,8 @@ export default {
         const sessionID = ref('12321425')
         // const apiUrl = 'https://nv2muuac94.execute-api.us-east-2.amazonaws.com/dev/chat'
         // console.log('apiUrl:', apiUrl);
+        const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '';
+        const apiUrl = `${apiBaseUrl}/dev/chat`;
         const formattedApiResponse = ref('');
 
         const formatResponseToVietnamese  = (response) => {
@@ -68,7 +70,7 @@ export default {
                     inputText: inputText,
                     sessionId: sessionID.value
                 };
-                const apiResponse = await fetch('/api/dev/chat', {
+                const apiResponse = await fetch(apiUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
