@@ -48,7 +48,7 @@ export default {
             }
         ]);
         const sessionID = ref('12321425')
-        // const apiUrl = 'https://nv2muuac94.execute-api.us-east-2.amazonaws.com/dev/chat'
+        const apiUrl = 'https://nv2muuac94.execute-api.us-east-2.amazonaws.com/dev/chat'
         // console.log('apiUrl:', apiUrl);
         const formattedApiResponse = ref('');
 
@@ -68,7 +68,14 @@ export default {
                     inputText: inputText,
                     sessionId: sessionID.value
                 };
-                const apiResponse = await fetch('/api/dev/chat', {
+                // const apiResponse = await fetch('/api/dev/chat', {
+                //     method: 'POST',
+                //     headers: {
+                //         'Content-Type': 'application/json'
+                //     },
+                //     body: JSON.stringify(bodyData)
+                // });
+                const apiResponse = await fetch(apiUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
