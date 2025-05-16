@@ -1,6 +1,6 @@
 <template>
     <div class="option-container">
-        <p>ESTEC Chatbot</p>
+        <p>ESTEC CHATBOT</p>
         <div class="question-list">
             <div class="date-group" v-for="(group, index) in groupdedQuestions" :key="index">
                 <div class="group-label">
@@ -82,18 +82,26 @@ export default {
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 100vh;
+    height: 100%;
     color: black;
     font-weight: bold;
     background: rgba(255, 255, 255, 0.2);
     backdrop-filter: blur(2px);
 }
 
+.option-container > p {
+    font-weight: bold;
+    font-size: 20px;
+    color: white;
+}
+
 .question-list {
-  width: 250px;
+  width: 100%;
   color: #d0d3d4;
   font-family: Arial, sans-serif;
   padding: 10px;
+  overflow-x: hidden;
+  overflow-y: scroll;
 }
 
 .date-group {
@@ -119,7 +127,7 @@ export default {
 }
 
 .question-item:hover {
-  background: #fff;
+  background: #f8f9f9;
 }
 
 .question-item span {
