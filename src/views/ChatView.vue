@@ -22,7 +22,7 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import ChatBubble from '../components/ChatBubble.vue';
 import ChatInput from '../components/ChatInput.vue';
 import GenAiOption from './GenAiOption.vue';
@@ -47,17 +47,76 @@ export default {
                 sender: 'bot'
             }
         ]);
+        const sessionID = ref('12321425')
+        // const apiUrl = 'https://nv2muuac94.execute-api.us-east-2.amazonaws.com/dev/chat'
+        // console.log('apiUrl:', apiUrl);
+        const formattedApiResponse = ref('');
+
+        const formatResponseToVietnamese  = (response) => {
+            try {
+                const decodedResponse = decodeURIComponent(escape(response));
+                return decodedResponse
+            } catch (error) {
+                console.error("Lỗi khi định dạng response:", error);
+                return "Có lỗi xảy ra khi xử lý dữ liệu.";
+            }
+        }
+
+        const sendMessageToApi = async (inputText) => {
+            try {
+                const bodyData = {
+                    inputText: inputText,
+                    sessionId: sessionID.value
+                };
+                const apiResponse = await fetch('/api/dev/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(bodyData)
+                });
+                console.log('apiResponse:', apiResponse);
+
+                if (!apiResponse.ok) {
+                    const error = await apiResponse.json();
+                    console.error('Lỗi gọi API:', error);
+                    messages.value.push({ text: 'Đã có lỗi xảy ra khi giao tiếp với máy chủ.', sender: 'bot' });
+                    return;
+                }
+
+                const responseData = await apiResponse.json();
+                console.log('Phản hồi từ API:', responseData);
+                
+                // Gọi hàm format ngay sau khi nhận được responseData
+                formattedApiResponse.value = formatResponseToVietnamese(responseData.response)
+                console.log('formattedApiResponse:', formattedApiResponse.value);
+
+                // Xử lý dữ liệu phản hồi và thêm tin nhắn từ bot vào messages
+                if (responseData && responseData.response) {
+                    messages.value.push({ text: formattedApiResponse, sender: 'bot' });
+                } else {
+                    messages.value.push({ text: 'Không nhận được phản hồi hợp lệ từ máy chủ', sender: 'bot' })
+                }
+            } catch (error) {
+                console.error('Lỗi gọi API:', error);
+                messages.value.push({ text: 'Không thể kết nối đến máy chủ.', sender: 'bot' });
+            }
+        }
 
         const handleSendMessage = (newMessage) => {
             messages.value.push({ text: newMessage, sender: 'user' });
-            setTimeout(() => {
-                messages.value.push({ text: `Bạn vừa nói: "${newMessage}"` })
-            }, 1000);
+            // setTimeout(() => {
+            //     messages.value.push({ text: `Bạn vừa nói: "${newMessage}"` })
+            // }, 1000);
+            sendMessageToApi(newMessage);
         }
 
         return {
             messages,
-            handleSendMessage
+            handleSendMessage,
+            sendMessageToApi,
+            formatResponseToVietnamese,
+            formattedApiResponse
         }
     }
 }
