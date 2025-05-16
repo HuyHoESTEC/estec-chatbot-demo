@@ -48,10 +48,10 @@ export default {
             }
         ]);
         const sessionID = ref('12321425')
-        const apiUrl = 'https://nv2muuac94.execute-api.us-east-2.amazonaws.com/dev/chat'
+        // const apiUrl = 'https://nv2muuac94.execute-api.us-east-2.amazonaws.com/dev/chat'
         // console.log('apiUrl:', apiUrl);
-        // const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '';
-        // const apiUrl = `${apiBaseUrl}/dev/chat`;
+        const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '';
+        const apiUrl = `${apiBaseUrl}/dev/chat`;
         const formattedApiResponse = ref('');
 
         const formatResponseToVietnamese  = (response) => {

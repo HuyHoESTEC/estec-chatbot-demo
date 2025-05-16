@@ -1,6 +1,6 @@
 <template>
     <div class="chat-input">
-        <input class="input-message" type="text" @key.enter="sendMessage" v-model="newMessage" placeholder="Hỏi bất cứ điều gì...">
+        <input class="input-message" type="text" v-on:keyup.enter="sendMessage" v-model="newMessage" placeholder="Hỏi bất cứ điều gì...">
         <button v-on:click="sendMessage" :disabled="!newMessage.trim()">Gửi</button>
     </div>
 </template>
@@ -35,6 +35,7 @@ export default {
   align-items: center;
   padding: 10px;
   border-top: 1px solid #ccc;
+  border-radius: 25px;
 }
 
 .chat-input input {
@@ -69,6 +70,7 @@ export default {
   border-radius: 8px;
   width: 100%;
   box-sizing: border-box;
+  height: 70px;
 }
 
 .input-message:hover,
