@@ -48,10 +48,13 @@ export default {
             }
         ]);
         const sessionID = ref('12321425')
+        // API url test for PROD environment
         const apiUrl = 'https://nv2muuac94.execute-api.us-east-2.amazonaws.com/dev/chat'
-        // console.log('apiUrl:', apiUrl);
+
+        // API url test for local environment
         // const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || '';
         // const apiUrl = `${apiBaseUrl}/dev/chat`;
+        
         const formattedApiResponse = ref('');
 
         const formatResponseToVietnamese  = (response) => {
