@@ -36,18 +36,41 @@ export default {
                     label: "7 ngày trước đó",
                     items: [
                         { title: "Dữ liệu GA01, GA02, GA03 ngày 11/03/2025 lúc 12:30:00" },
-                        { title: "Dữ liệu đầu lò ngày xxx" },
-                        { title: "Dữ liệu đầu lò ngày xxx" }
+                        { title: "Dữ liệu đầu lò ngày 27/05/2025" },
+                        { title: "Dữ liệu đầu lò ngày 26/05/2025" }
                     ]
                 },
                 {
                     label: "30 ngày trước đó",
                     items: [
-                        { title: "Dữ liệu đầu lò ngày xxx" },
-                        { title: "Dữ liệu đầu lò ngày xxx" },
-                        { title: "Dữ liệu đầu lò ngày xxx" }
+                        { title: "Dữ liệu đầu lò ngày 26/05/2025" },
+                        { title: "Dữ liệu đầu lò ngày 04/06/2025" },
+                        { title: "Dữ liệu đầu lò ngày 17/05/2025" },
+                        { title: "Dữ liệu đầu lò ngày 30/05/2025" },
+                        { title: "Dữ liệu đầu lò ngày 22/05/2025" }
                     ]
-                }
+                },
+                {
+                    label: "60 ngày trước đó",
+                    items: [
+                        { title: "Dữ liệu GA01, GA02, GA03 ngày 11/03/2025 lúc 12:30:00" },
+                        { title: "Dữ liệu đầu lò ngày 08/06/2025" },
+                        { title: "Dữ liệu đầu lò ngày 19/05/2025" },
+                        { title: "Dữ liệu đầu lò ngày 27/05/2025" },
+                        { title: "Dữ liệu đầu lò ngày 02/06/2025" },
+                        { title: "Dữ liệu đầu lò ngày 15/05/2025" }
+                    ]
+                },
+                {
+                    label: "90 ngày trước đó",
+                    items: [
+                        { title: "Dữ liệu GA01, GA02, GA03 ngày 11/03/2025 lúc 12:30:00" },
+                        { title: "Dữ liệu đầu lò ngày 31/05/2025" },
+                        { title: "Dữ liệu đầu lò ngày 24/05/2025" },
+                        { title: "Dữ liệu đầu lò ngày 06/06/2025" },
+                        { title: "Dữ liệu đầu lò ngày 21/05/2025" },
+                    ]
+                },
             ]
         }
     }
