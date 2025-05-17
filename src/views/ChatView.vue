@@ -10,12 +10,14 @@
                     :key="index"
                     :message="message.text"
                     :isUser="message.sender === 'user'"
+                    :timeStamp="message.createdAt"
                 />
                 <ChatBubble 
                     v-if="displayedBotMessage"
                     :message="displayedBotMessage"
                     :isUser="false"
                     isTyping="true"
+                    :timeStamp="botMessageCreatedAt"
                 />
             </div>
             <ChatInput @send-message="handleSendMessage" />
@@ -28,7 +30,7 @@
 </template>
 
 <script>
-import { ref } from 'vue';
+import { onUnmounted, ref } from 'vue';
 import ChatBubble from '../components/ChatBubble.vue';
 import ChatInput from '../components/ChatInput.vue';
 import GenAiOption from './GenAiOption.vue';
@@ -46,11 +48,13 @@ export default {
         const messages = ref([
             {
                 text: 'Xin chào, tôi là trợ lý ESTEC chatbot ',
-                sender: 'bot'
+                sender: 'bot',
+                createdAt: new Date()
             },
             {
                 text: 'Tôi có thể giúp gì cho bạn ?',
-                sender: 'bot'
+                sender: 'bot',
+                createdAt: new Date(Date.now() - 60000)
             }
         ]);
         const sessionID = ref('12321425')
@@ -62,9 +66,12 @@ export default {
         // const apiUrl = `${apiBaseUrl}/dev/chat`;
         
         const formattedApiResponse = ref('');
+
         const displayedBotMessage = ref('');
         const typingSpeed = ref(50);
         let typingInterval = null;
+
+        const botMessageCreatedAt = ref(null);
 
         const formatResponseToVietnamese  = (response) => {
             try {
@@ -82,14 +89,16 @@ export default {
         }
 
         const startTypingEffect = () => {
+            botMessageCreatedAt.value = new Date();
             let charIndex = 0;
+            displayedBotMessage.value = '';
             typingInterval = setInterval(() => {
                 if (charIndex < formattedApiResponse.value.length) {
                     displayedBotMessage.value += formattedApiResponse.value[charIndex];
                     charIndex++;
                 } else {
                     clearInterval(typingInterval);
-                    messages.value.push({ text: formattedApiResponse, sender: 'bot' });
+                    messages.value.push({ text: formattedApiResponse, sender: 'bot', createdAt: new Date() });
                     displayedBotMessage.value = '';
                 }
             }, typingSpeed.value);
@@ -113,7 +122,7 @@ export default {
                 if (!apiResponse.ok) {
                     const error = await apiResponse.json();
                     console.error('Lỗi gọi API:', error);
-                    messages.value.push({ text: 'Đã có lỗi xảy ra khi giao tiếp với máy chủ.', sender: 'bot' });
+                    messages.value.push({ text: 'Đã có lỗi xảy ra khi giao tiếp với máy chủ.', sender: 'bot', createdAt: new Date() });
                     return;
                 }
 
@@ -131,21 +140,25 @@ export default {
                     startTypingEffect();
                     // messages.value.push({ text: formattedApiResponse, sender: 'bot' });
                 } else {
-                    messages.value.push({ text: 'Không nhận được phản hồi hợp lệ từ máy chủ', sender: 'bot' })
+                    messages.value.push({ text: 'Không nhận được phản hồi hợp lệ từ máy chủ', sender: 'bot', createdAt: new Date() })
                 }
             } catch (error) {
                 console.error('Lỗi gọi API:', error);
-                messages.value.push({ text: 'Không thể kết nối đến máy chủ.', sender: 'bot' });
+                messages.value.push({ text: 'Không thể kết nối đến máy chủ.', sender: 'bot', createdAt: new Date() });
             }
         }
 
         const handleSendMessage = (newMessage) => {
-            messages.value.push({ text: newMessage, sender: 'user' });
+            messages.value.push({ text: newMessage, sender: 'user', createdAt: new Date() });
             // setTimeout(() => {
             //     messages.value.push({ text: `Bạn vừa nói: "${newMessage}"` })
             // }, 1000);
             sendMessageToApi(newMessage);
         }
+
+        onUnmounted(() => {
+            clearInterval(typingInterval);
+        })
 
         return {
             messages,
