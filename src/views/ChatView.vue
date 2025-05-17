@@ -11,6 +11,12 @@
                     :message="message.text"
                     :isUser="message.sender === 'user'"
                 />
+                <ChatBubble 
+                    v-if="displayedBotMessage"
+                    :message="displayedBotMessage"
+                    :isUser="false"
+                    isTyping="true"
+                />
             </div>
             <ChatInput @send-message="handleSendMessage" />
         </div>
@@ -56,16 +62,38 @@ export default {
         // const apiUrl = `${apiBaseUrl}/dev/chat`;
         
         const formattedApiResponse = ref('');
+        const displayedBotMessage = ref('');
+        const typingSpeed = ref(50);
+        let typingInterval = null;
 
         const formatResponseToVietnamese  = (response) => {
             try {
                 const decodedResponse = decodeURIComponent(escape(response));
-                return decodedResponse
+                const prefixToRemove = "Phản hồi:";
+                if (decodedResponse.startsWith(prefixToRemove)) {
+                    return decodedResponse.substring(prefixToRemove.length).trim();
+                } else {
+                    return decodedResponse
+                }
             } catch (error) {
                 console.error("Lỗi khi định dạng response:", error);
                 return "Có lỗi xảy ra khi xử lý dữ liệu.";
             }
         }
+
+        const startTypingEffect = () => {
+            let charIndex = 0;
+            typingInterval = setInterval(() => {
+                if (charIndex < formattedApiResponse.value.length) {
+                    displayedBotMessage.value += formattedApiResponse.value[charIndex];
+                    charIndex++;
+                } else {
+                    clearInterval(typingInterval);
+                    messages.value.push({ text: formattedApiResponse, sender: 'bot' });
+                    displayedBotMessage.value = '';
+                }
+            }, typingSpeed.value);
+        };
 
         const sendMessageToApi = async (inputText) => {
             try {
@@ -93,12 +121,15 @@ export default {
                 console.log('Phản hồi từ API:', responseData);
                 
                 // Gọi hàm format ngay sau khi nhận được responseData
-                formattedApiResponse.value = formatResponseToVietnamese(responseData.response)
-                console.log('formattedApiResponse:', formattedApiResponse.value);
+                // formattedApiResponse.value = formatResponseToVietnamese(responseData.response)
+                // console.log('formattedApiResponse:', formattedApiResponse.value);
 
                 // Xử lý dữ liệu phản hồi và thêm tin nhắn từ bot vào messages
                 if (responseData && responseData.response) {
-                    messages.value.push({ text: formattedApiResponse, sender: 'bot' });
+                    formattedApiResponse.value = formatResponseToVietnamese(responseData.response);
+                    displayedBotMessage.value = '';
+                    startTypingEffect();
+                    // messages.value.push({ text: formattedApiResponse, sender: 'bot' });
                 } else {
                     messages.value.push({ text: 'Không nhận được phản hồi hợp lệ từ máy chủ', sender: 'bot' })
                 }
@@ -121,7 +152,9 @@ export default {
             handleSendMessage,
             sendMessageToApi,
             formatResponseToVietnamese,
-            formattedApiResponse
+            formattedApiResponse,
+            displayedBotMessage,
+            startTypingEffect
         }
     }
 }
