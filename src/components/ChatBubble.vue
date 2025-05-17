@@ -64,6 +64,7 @@ export default {
   margin-bottom: 8px;
   max-width: 80%;
   word-break: break-word;
+  text-align: left;
 }
 
 .chat-bubble-container.user .chat-bubble {
