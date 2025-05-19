@@ -123,6 +123,7 @@ export default {
   cursor: pointer;
   font-size: 14px;
   color: #566573;
+  text-align: left;
 }
 
 .suggest-question-item:hover {
