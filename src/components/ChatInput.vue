@@ -1,6 +1,6 @@
 <template>
     <div class="chat-input">
-        <input class="input-message" type="text" v-on:keyup.enter="sendMessage" v-model="newMessage" placeholder="Hỏi bất cứ điều gì...">
+        <textarea class="input-message" v-on:keyup.enter="handleEnter" v-model="newMessage" placeholder="Hỏi bất cứ điều gì..." />
         <button v-on:click="sendMessage" :disabled="!newMessage.trim()">Gửi</button>
     </div>
 </template>
@@ -21,9 +21,19 @@ export default {
             }
         }
 
+        const handleEnter = (event) => {
+          if (event.shiftKey) {
+            // Nếu Shift + Enter được nhấn, thêm một dòng mới vào textarea
+            newMessage.value += '\n';
+          } else {
+            sendMessage();
+          }
+        }
+
         return {
             newMessage,
-            sendMessage
+            sendMessage,
+            handleEnter
         }
     }
 }
@@ -38,7 +48,7 @@ export default {
   border-radius: 25px;
 }
 
-.chat-input input {
+.chat-input textarea {
   flex-grow: 1;
   padding: 8px;
   border: 1px solid #ccc;
@@ -71,6 +81,11 @@ export default {
   width: 100%;
   box-sizing: border-box;
   height: 70px;
+  resize: none; /* Cho phép người dùng kéo để thay đổi chiều cao */
+  min-height: 40px; /* Chiều cao tối thiểu */
+  line-height: 1.5; /* Khoảng cách dòng */
+  overflow-y: auto; /* Hiển thị scrollbar khi nội dung vượt quá chiều cao */
+  white-space: pre-wrap; /* Giữ nguyên khoảng trắng và xuống dòng */
 }
 
 .input-message:hover,
