@@ -99,6 +99,8 @@ export default {
   padding: 10px;
   overflow-x: hidden;
   overflow-y: scroll;
+  max-height: 100vh; /* Hoặc một chiều cao cố định phù hợp với layout của bạn */
+  overflow-y: auto; /* Cho phép hiển thị thanh cuộn khi nội dung vượt quá max-height */
 }
 
 .date-group {
@@ -140,5 +142,34 @@ export default {
   height: 8px;
   background-color: #1976d2;
   border-radius: 50%;
+}
+
+.question-list::-webkit-scrollbar {
+  width: 8px; /* Độ rộng của thanh cuộn */
+}
+
+.question-list::-webkit-scrollbar-thumb {
+  background-color: #ccc; /* Màu của "ngón tay" thanh cuộn */
+  border-radius: 4px;
+}
+
+.question-list::-webkit-scrollbar-track {
+  background-color: #f1f1f1; /* Màu của "đường ray" thanh cuộn */
+}
+
+/* Ẩn thanh cuộn khi không hover (tùy chọn, có thể không hoạt động trên mọi trình duyệt) */
+.question-list {
+  scrollbar-width: thin; /* Cho Firefox */
+  scrollbar-color: #ccc #f1f1f1; /* Cho Firefox */
+}
+
+/* Ẩn thanh cuộn mặc định của WebKit (Chrome, Safari) khi không hover */
+.question-list:hover::-webkit-scrollbar-thumb {
+  opacity: 1; /* Hiển thị khi hover */
+}
+
+.question-list::-webkit-scrollbar-thumb {
+  opacity: 0; /* Ẩn mặc định */
+  transition: opacity 0.3s ease;
 }
 </style>

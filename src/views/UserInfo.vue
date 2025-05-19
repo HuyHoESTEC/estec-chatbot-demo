@@ -27,16 +27,16 @@ export default {
                 {
                     label: "Gợi ý câu hỏi",
                     items: [
-                        { title: "Dữ liệu đầu lò ngày 10/03/2025 lúc 12:30:00" },
-                        { title: "Dữ liệu GA01 ngày 14/03/2025 lúc 12:30:00" },
-                        { title: "Dữ liệu GA01, GA02 ngày 14/03/2025 lúc 12:30:00" },
-                        { title: "Dữ liệu GA01, GA02, GA03 ngày 14/03/2025 lúc 12:30:00" },
-                        { title: "Dữ liệu GA01, GA02, GA03 ngày 13/03/2025 lúc 09:15:00, 10:30:00, 04:40:00" },
-                        { title: "Dữ liệu GA01, GA02 ngày 13/03/2025 lúc 09:15:00, 10:30:00, 04:40:00" },
-                        { title: "Dữ liệu GA01 ngày 13/03/2025 lúc 09:15:00, 10:30:00, 04:40:00" },
-                        { title: "Dữ liệu đầu lò ngày 13/03/2025 lúc 09:15:00, 10:30:00, 04:40:00" },
-                        { title: "Dữ liệu GA01, GA02, GA03 ngày hôm qua lúc 09:15:00, 10:30:00, 04:40:00" },
-                        { title: "Dữ liệu GA01, GA02, GA03 ngày hôm nay lúc 09:15:00, 10:30:00, 04:40:00" },
+                        { title: "Giá trị NOx, Oxy GA02 lúc 00:00:00 ngày 12/05/2025 là bao nhiêu?" },
+                        { title: "Dữ liệu cảm biến lúc 21:00:00 ngày 11/05/2025, cảm biến NOx và cảm biến Oxy GA03 có giá trị bao nhiêu?" },
+                        { title: "Dữ liệu của cảm biến GA01, GA02 và GA03 tại thời điểm lúc 12:30:00, 13:30:00, 14:45:00, 15:55:00, 16:20:00 và 17:30:00 ngày 10/05/2025 là bao nhiêu, so sánh các giá trị với nhau và đánh giá dữ liệu" },
+                        { title: "Cho tôi biết giá trị NOx, Oxy GA01 tại thời điểm 14:30 13/05/2025" },
+                        { title: "Giá trị NOx, Oxy GA02 lúc 00:00:00 ngày 12/05/2025 là bao nhiêu?" },
+                        { title: "Dữ liệu cảm biến lúc 21:00:00 ngày 11/05/2025, cảm biến NOx và cảm biến Oxy GA03 có giá trị bao nhiêu?" },
+                        { title: "Dữ liệu cảm biến NOx và cảm biến Oxy GA03 của lò nung vào lúc 06:00:00 ngày 10/05/2025 là gì?" },
+                        { title: "Dữ liệu cảm biến NOx và cảm biến Oxy GA03 lúc 10:00:00 ngày 09/05/2025 là bao nhiêu?" },
+                        { title: "Dữ liệu cảm biến NOx và cảm biến Oxy GA03 tại thời điểm 18:45:00 ngày 08/05/2025 là bao nhiêu?" },
+                        { title: "Dữ liệu cảm biến NOx và cảm biến Oxy GA03 tại thời điểm 14:00:00 ngày 07/05/2025 là bao nhiêu?" },
                     ]
                 }
             ]
@@ -101,6 +101,8 @@ export default {
   height: 40%;
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(2px);
+  max-height: 100vh; /* Hoặc một chiều cao cố định phù hợp với layout của bạn */
+  overflow-y: auto; /* Cho phép hiển thị thanh cuộn khi nội dung vượt quá max-height */
 }
 
 .date-group {
@@ -133,5 +135,34 @@ export default {
 .suggest-question-item span {
   white-space: inherit;
   overflow: hidden;
+}
+
+.suggest-question-list::-webkit-scrollbar {
+  width: 8px; /* Độ rộng của thanh cuộn */
+}
+
+.suggest-question-list::-webkit-scrollbar-thumb {
+  background-color: #ccc; /* Màu của "ngón tay" thanh cuộn */
+  border-radius: 4px;
+}
+
+.suggest-question-list::-webkit-scrollbar-track {
+  background-color: #f1f1f1; /* Màu của "đường ray" thanh cuộn */
+}
+
+/* Ẩn thanh cuộn khi không hover (tùy chọn, có thể không hoạt động trên mọi trình duyệt) */
+.suggest-question-list {
+  scrollbar-width: thin; /* Cho Firefox */
+  scrollbar-color: #ccc #f1f1f1; /* Cho Firefox */
+}
+
+/* Ẩn thanh cuộn mặc định của WebKit (Chrome, Safari) khi không hover */
+.suggest-question-list:hover::-webkit-scrollbar-thumb {
+  opacity: 1; /* Hiển thị khi hover */
+}
+
+.suggest-question-list::-webkit-scrollbar-thumb {
+  opacity: 0; /* Ẩn mặc định */
+  transition: opacity 0.3s ease;
 }
 </style>
