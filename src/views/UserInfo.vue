@@ -163,6 +163,12 @@ export default {
   margin-bottom: 16px;
 }
 
+.date-group ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
 .group-label {
   font-size: 14px;
   font-weight: bold;
