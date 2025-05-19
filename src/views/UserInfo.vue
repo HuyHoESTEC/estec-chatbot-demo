@@ -1,6 +1,21 @@
 <template>
     <div class="info-container">
         <p>ESTEC FACTORY - {{ formattedDateTime }}</p>
+        <div class="active-sensor-list">
+            <div class="sensor-group" v-for="(group, index) in activeSensorList" :key="index">
+                <div class="group-label">
+                    {{ group.label }}
+                </div>
+                <ul>
+                    <li class="active-sensor-item" v-for="(item, idx) in group.items" :key="idx" >
+                        <span>
+                            <i class="sensor-icon active"></i>
+                            {{ item.title }}
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </div>
         <div class="suggest-question-list">
             <div class="date-group" v-for="(group, index) in groupdedQuestions" :key="index">
                 <div class="group-label">
@@ -37,6 +52,45 @@ export default {
                         { title: "Dữ liệu cảm biến NOx và cảm biến Oxy GA03 lúc 10:00:00 ngày 09/05/2025 là bao nhiêu?" },
                         { title: "Dữ liệu cảm biến NOx và cảm biến Oxy GA03 tại thời điểm 18:45:00 ngày 08/05/2025 là bao nhiêu?" },
                         { title: "Dữ liệu cảm biến NOx và cảm biến Oxy GA03 tại thời điểm 14:00:00 ngày 07/05/2025 là bao nhiêu?" },
+                    ]
+                }
+            ],
+            activeSensorList: [
+                {
+                    label: "Danh sách cảm biến đang hoạt động",
+                    items: [
+                        { title: "Nhiệt độ vòi đốt lò" },
+                        { title: "Dòng điện động cơ quay lò" },
+                        { title: "Nhiệt độ đầu lò" },
+                        { title: "Cảm biến GA02 đo nồng độ khí Oxi sau cyclon tầng 2 phía silo" },
+                        { title: "Cảm biến GA01 đo nồng độ khí Oxi sau cyclon tầng 2 phía silo" },
+                        { title: "Cảm biến GA03 đo nồng độ khí Oxi sau cyclon tầng 2 phía silo" },
+                        { title: "Cảm biến GA01 đo nồng độ khí NOx ở đầu lò" },
+                        { title: "Điểm thiết lập than PC" },
+                        { title: "Tổng mức tiêu thụ đống" },
+                        { title: "Nhiệt độ tháp dầu" },
+                        { title: "Tốc độ lò SP" },
+                        { title: "Nhiệt độ đầu của bộ thu hồi nhiệt" },
+                        { title: "Than SP" },
+                        { title: "Điểm thiết lập nhiên liệu thực tế" },
+                        { title: "Tỷ lệ thay thế nhiệt bằng nhiên liệu thay thế" },
+                        { title: "Lượng nhiên liệu tiêu thụ thực tế" },
+                        { title: "Tốc độ quay lò thực tế" },
+                        { title: "Nhiệt độ trung bình vùng cháy BZT" },
+                        { title: "Tốc độ quạt thiết lập" },
+                        { title: "Độ mở van điều khiển quạt" },
+                        { title: "Nhiệt độ tầng cyclon C3" },
+                        { title: "Nhiệt độ tầng cyclon C2" },
+                        { title: "Lưu lượng than phun thực tế" },
+                        { title: "Trọng lượng nguyên liệu vải cân được" },
+                        { title: "Áp suất tại đầu lò (hood)" },
+                        { title: "Quạt gió cấp 4 S1" },
+                        { title: "Lưu lượng băng tải 02" },
+                        { title: "Hàm lượng SO3 trong khí thải" },
+                        { title: "Lưu lượng cấp liệu thực tế vùng SZ" },
+                        { title: "Hàm lượng vôi tự do (CaO tự do) trong clinker" },
+                        { title: "Áp suất thủy lực" },
+                        { title: "Áp suất quạt gió thổi than 02" },
                     ]
                 }
             ]
@@ -164,5 +218,93 @@ export default {
 .suggest-question-list::-webkit-scrollbar-thumb {
   opacity: 0; /* Ẩn mặc định */
   transition: opacity 0.3s ease;
+}
+
+
+.active-sensor-list {
+  width: 100%;
+  color: #d0d3d4;
+  font-family: Arial, sans-serif;
+  padding: 10px;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  height: 40%;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  max-height: 100vh; /* Hoặc một chiều cao cố định phù hợp với layout của bạn */
+  overflow-y: auto; /* Cho phép hiển thị thanh cuộn khi nội dung vượt quá max-height */
+}
+
+.sensor-group {
+  margin-bottom: 16px;
+}
+
+.sensor-group ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.active-sensor-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 2px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #f4f6f7;
+  text-align: left;
+}
+
+.active-sensor-item:hover {
+  background: #f8f9f9;
+  color: black;
+}
+
+.active-sensor-item span {
+  white-space: inherit;
+  overflow: hidden;
+}
+
+.active-sensor-list::-webkit-scrollbar {
+  width: 8px; /* Độ rộng của thanh cuộn */
+}
+
+.active-sensor-list::-webkit-scrollbar-thumb {
+  background-color: #ccc; /* Màu của "ngón tay" thanh cuộn */
+  border-radius: 4px;
+}
+
+.active-sensor-list::-webkit-scrollbar-track {
+  background-color: #f1f1f1; /* Màu của "đường ray" thanh cuộn */
+}
+
+/* Ẩn thanh cuộn khi không hover (tùy chọn, có thể không hoạt động trên mọi trình duyệt) */
+.active-sensor-list {
+  scrollbar-width: thin; /* Cho Firefox */
+  scrollbar-color: #ccc #f1f1f1; /* Cho Firefox */
+}
+
+/* Ẩn thanh cuộn mặc định của WebKit (Chrome, Safari) khi không hover */
+.active-sensor-list:hover::-webkit-scrollbar-thumb {
+  opacity: 1; /* Hiển thị khi hover */
+}
+
+.active-sensor-list::-webkit-scrollbar-thumb {
+  opacity: 0; /* Ẩn mặc định */
+  transition: opacity 0.3s ease;
+}
+
+.sensor-icon {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.sensor-icon.active {
+  background-color: #1e8449; /* Màu xanh lá cây cho trạng thái hoạt động */
 }
 </style>
