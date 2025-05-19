@@ -209,6 +209,7 @@ export default {
   overflow: hidden;
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(2px);
+  overflow: hidden; /* Ẩn thanh cuộn mặc định */
 }
 
 .chat-messages {
@@ -232,5 +233,19 @@ export default {
 .user-info-container {
     width: 20%;
     height: 100vh;
+}
+
+/* Tùy chỉnh giao diện thanh cuộn (nếu muốn) */
+.chat-messages::-webkit-scrollbar {
+  width: 8px; /* Độ rộng thanh cuộn */
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background-color: #ccc; /* Màu "ngón tay" thanh cuộn */
+  border-radius: 4px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+  background-color: #f1f1f1; /* Màu "đường ray" thanh cuộn */
 }
 </style>
