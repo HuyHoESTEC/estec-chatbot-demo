@@ -167,4 +167,12 @@ export default {
   opacity: 0; /* Ẩn mặc định */
   transition: opacity 0.3s ease;
 }
+
+@media (max-width: 767px) {
+    .option-container > p {
+        font-weight: bold;
+        font-size: 20px;
+        color: black;
+    }
+}
 </style>

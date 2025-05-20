@@ -313,4 +313,23 @@ export default {
 .sensor-icon.active {
   background-color: #1e8449; /* Màu xanh lá cây cho trạng thái hoạt động */
 }
+
+@media (max-width: 767px) {
+    .info-container > p {
+        font-weight: bold;
+        color: black;
+    }
+
+    .active-sensor-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 2px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #566573;
+    text-align: left;
+    }
+}
 </style>
