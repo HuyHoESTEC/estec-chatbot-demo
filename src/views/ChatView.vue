@@ -17,33 +17,20 @@
                         :message="message.text"
                         :isUser="message.sender === 'user'"
                         :timeStamp="message.createdAt"
-                    />
-                    <ChatBubble
-                        v-if="isGeneratingResponse"
-                        message="Đang xử lý..."
-                        :isUser="false"
-                        isTyping="true"
-                        :timeStamp="generatingTime"
-                    />
-                    <ChatBubble 
-                        v-if="displayedBotMessage"
-                        :message="displayedBotMessage"
-                        :isUser="false"
-                        isTyping="true"
-                        :timeStamp="botMessageCreatedAt"
+                        :isTyping="message.sender === 'bot' && message.isTyping"
                     />
                 </div>
                 <ChatInput @send-message="handleSendMessage" />
-                </div>
             </div>
+        </div>
         <div :class="['user-info-container', { 'show-sidebar': showUserInfo }]">
             <UserInfo />
         </div>
     </div>
-    
 </template>
 
 <script>
+
 import { onBeforeUnmount, onMounted, onUnmounted, ref } from 'vue';
 import ChatBubble from '../components/ChatBubble.vue';
 import ChatInput from '../components/ChatInput.vue';
@@ -80,17 +67,14 @@ export default {
         // const apiUrl = `${apiBaseUrl}/dev/chat`;
         const isMobile = ref(false);
         const showIntroChatBot = ref(false);
-        const showUserInfo = ref(false); 
+        const showUserInfo = ref(false);
 
-        const formattedApiResponse = ref('');
+        const userMessage = ref(''); // Input của người dùng
 
-        const displayedBotMessage = ref('');
         const typingSpeed = ref(30);
-        let typingInterval = null;
+        let typingInterval = null; // Khai báo là let để có thể gán lại
         const isGeneratingResponse = ref(false);
         const generatingTime = ref(null);
-
-        const botMessageCreatedAt = ref(null);
 
         const formatResponseToVietnamese  = (response) => {
             try {
@@ -107,25 +91,72 @@ export default {
             }
         }
 
-        const startTypingEffect = () => {
-            botMessageCreatedAt.value = new Date();
+        const startTypingEffect = (messageIndex, fullResponseText) => {
+            const messageObject = messages.value[messageIndex];
+
+            // console.log('--- startTypingEffect called with index ---');
+            // console.log('  messageIndex:', messageIndex);
+            // console.log('  messageObject (from messages.value):', JSON.parse(JSON.stringify(messageObject)));
+            // console.log('  fullResponseText:', fullResponseText);
+            // console.log('  fullResponseText.length:', fullResponseText ? fullResponseText.length : 'N/A');
+
+            if (typingInterval) {
+                clearInterval(typingInterval);
+                // console.log('  Cleared previous typingInterval.');
+            }
+
             let charIndex = 0;
-            displayedBotMessage.value = '';
+            // Đảm bảo tin nhắn bắt đầu rỗng và cờ isTyping là true
+            // Cập nhật trực tiếp trên messageObject đã lấy từ mảng reactive
+            messageObject.text = '';
+            messageObject.isTyping = true;
+
+            // console.log('  messageObject.text after reset:', messageObject.text);
+            // console.log('  messageObject.isTyping after set to true:', messageObject.isTyping);
+
+            if (!fullResponseText || fullResponseText.length === 0) {
+                // console.warn('  fullResponseText is empty or null, typing effect will not run.');
+                messageObject.text = fullResponseText || 'Không có nội dung phản hồi.';
+                messageObject.isTyping = false;
+                isGeneratingResponse.value = false;
+                // console.log('--- Typing effect FINISHED (empty response) ---');
+                // console.log('  Final messageObject:', JSON.parse(JSON.stringify(messageObject)));
+                return;
+            }
+
             typingInterval = setInterval(() => {
-                if (charIndex < formattedApiResponse.value.length) {
-                    displayedBotMessage.value += formattedApiResponse.value[charIndex];
+                if (charIndex < fullResponseText.length) {
+                    // Cập nhật trực tiếp trên messageObject đã lấy từ mảng reactive
+                    messageObject.text += fullResponseText[charIndex];
                     charIndex++;
+                    // console.log('    Typing... current text:', messageObject.text);
                 } else {
                     clearInterval(typingInterval);
-                    messages.value.push({ text: formattedApiResponse, sender: 'bot', createdAt: new Date() });
-                    displayedBotMessage.value = '';
-                    isGeneratingResponse.value = false; // Ẩn đoạn chat giả khi có response thật
+                    // Cập nhật trực tiếp trên messageObject đã lấy từ mảng reactive
+                    messageObject.text = fullResponseText;
+                    messageObject.isTyping = false;
+                    isGeneratingResponse.value = false;
+                    // console.log('--- Typing effect FINISHED (complete response) ---');
+                    // console.log('  Final messageObject:', JSON.parse(JSON.stringify(messageObject)));
                 }
             }, typingSpeed.value);
+
+            console.log('  setInterval initiated. typingInterval ID:', typingInterval);
         };
 
         const sendMessageToApi = async (inputText) => {
-            isGeneratingResponse.value = true; // Hiển thị đoạn chat giả khi gửi request
+            messages.value.push({ text: inputText, sender: 'user', createdAt: new Date() });
+            const newBotMessage = { text: '', sender: 'bot', createdAt: new Date(), isTyping: true };
+            messages.value.push(newBotMessage);
+            const newBotMessageIndex = messages.value.length - 1;
+
+            // console.log('--- Send Message ---');
+            // console.log('User message added:', inputText);
+            // console.log('Bot placeholder added:', newBotMessage);
+            // console.log('Index of new bot message:', newBotMessageIndex);
+            // console.log('messages array after adding:', JSON.parse(JSON.stringify(messages.value)));
+
+            isGeneratingResponse.value = true;
             generatingTime.value = new Date(); // Lưu thời điểm bắt đầu "đợi"
             try {
                 const bodyData = {
@@ -144,45 +175,44 @@ export default {
                 if (!apiResponse.ok) {
                     const error = await apiResponse.json();
                     console.error('Lỗi gọi API:', error);
-                    messages.value.push({ text: 'Đã có lỗi xảy ra khi giao tiếp với máy chủ.', sender: 'bot', createdAt: new Date() });
+                    newBotMessage.text = 'Đã có lỗi xảy ra khi giao tiếp với máy chủ.';
+                    newBotMessage.isTyping = false;
                     isGeneratingResponse.value = false; // Ẩn đoạn chat giả khi có lỗi
+                    // console.log(newBotMessage.isTyping);
+
                     return;
                 }
 
                 const responseData = await apiResponse.json();
                 console.log('Phản hồi từ API:', responseData);
-                
-                // Gọi hàm format ngay sau khi nhận được responseData
-                // formattedApiResponse.value = formatResponseToVietnamese(responseData.response)
-                // console.log('formattedApiResponse:', formattedApiResponse.value);
 
                 // Xử lý dữ liệu phản hồi và thêm tin nhắn từ bot vào messages
                 if (responseData && responseData.response) {
-                    setTimeout(() => {
-                        formattedApiResponse.value = formatResponseToVietnamese(responseData.response);
-                        displayedBotMessage.value = '';
-                        isGeneratingResponse.value = false; // Ẩn đoạn chat giả khi không có response hợp lệ
-                        startTypingEffect();
-                    }, 3000);
-                    // messages.value.push({ text: formattedApiResponse, sender: 'bot' });
+                    const formattedText = formatResponseToVietnamese(responseData.response);
+                    // console.log('API response received:', responseData.response);
+                    // console.log('Formatted text:', formattedText);
+                    // console.log('Calling startTypingEffect with:', newBotMessage, formattedText);
+                    startTypingEffect(newBotMessageIndex, formattedText);
+                    // console.log(newBotMessage.isTyping);
                 } else {
-                    messages.value.push({ text: 'Không nhận được phản hồi hợp lệ từ máy chủ', sender: 'bot', createdAt: new Date() })
-                    isGeneratingResponse.value = false; // Ẩn đoạn chat giả khi không có response hợp lệ
+                    console.warn('  API response.response is empty or invalid.');
+                    // Cập nhật trực tiếp qua messages.value[index]
+                    messages.value[newBotMessageIndex].text = 'Không nhận được phản hồi hợp lệ từ máy chủ.';
+                    messages.value[newBotMessageIndex].isTyping = false;
+                    isGeneratingResponse.value = false;
                 }
             } catch (error) {
                 console.error('Lỗi gọi API:', error);
-                messages.value.push({ text: 'Không thể kết nối đến máy chủ.', sender: 'bot', createdAt: new Date() });
+                newBotMessage.text =  'Không thể kết nối đến máy chủ.';
+                newBotMessage.isTyping = false;
                 isGeneratingResponse.value = false; // Ẩn đoạn chat giả khi không có response hợp lệ
             }
         }
 
         const handleSendMessage = (newMessage) => {
-            messages.value.push({ text: newMessage, sender: 'user', createdAt: new Date() });
-            // setTimeout(() => {
-            //     messages.value.push({ text: `Bạn vừa nói: "${newMessage}"` })
-            // }, 1000);
             sendMessageToApi(newMessage);
-        }
+            userMessage.value = '';
+        };
 
         const toggleIntroChatBot = () => {
             showIntroChatBot.value = !showIntroChatBot.value;
@@ -221,27 +251,30 @@ export default {
         })
 
         return {
-            messages,
-            handleSendMessage,
-            sendMessageToApi,
             formatResponseToVietnamese,
-            formattedApiResponse,
-            displayedBotMessage,
             startTypingEffect,
-            isGeneratingResponse,
+            sendMessageToApi,
+            handleSendMessage,
             toggleIntroChatBot,
             toggleUserInfo,
             closeSidebars,
+            checkMobile,
+            isMobile,
             showIntroChatBot,
             showUserInfo,
-            isMobile
+            messages,
+            sessionID,
+            apiUrl,
+            typingSpeed,
+            isGeneratingResponse,
+            generatingTime
 
         }
     }
 }
 </script>
 
-<style>
+<style scoped>
 .main-container {
     display: flex;
     flex-direction: row;
